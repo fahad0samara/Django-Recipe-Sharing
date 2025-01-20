@@ -1,0 +1,30 @@
+{% load static %}
+
+<div class="glass-card p-4 mb-6">
+    <div class="flex items-center gap-4">
+        <label class="text-sm font-medium">Adjust Servings:</label>
+        <div class="flex items-center">
+            <button onclick="updateServings(-1)"
+                    class="p-1 rounded-l glass-card hover:bg-opacity-75">−</button>
+            <input type="number" 
+                   id="servings-input"
+                   value="{{ recipe.servings }}"
+                   min="1"
+                   class="w-16 text-center p-1 glass-card"
+                   onchange="updateServings(0)">
+            <button onclick="updateServings(1)"
+                    class="p-1 rounded-r glass-card hover:bg-opacity-75">+</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const baseServings = {{ recipe.servings }};
+
+function updateServings(change) {
+    const input = document.getElementById('servings-input');
+    const newServings = Math.max(1, parseInt(input.value) + change);
+    input.value = newServings;
+    IngredientScaler.updateDisplay(baseServings, newServings);
+}
+</script>

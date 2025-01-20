@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full">
+        <div class="glass-card p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-primary-400">Welcome Back</h2>
+                <p class="mt-2 text-gray-400">Sign in to your account</p>
+            </div>
+
+            <!-- Form -->
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                    <div class="message message-error">
+                        Please correct the errors below.
+                    </div>
+                {% endif %}
+
+                <!-- Username -->
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                        Username
+                    </label>
+                    <div class="mt-1">
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.username.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                        Password
+                    </label>
+                    <div class="mt-1">
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.password.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" 
+                               name="remember_me" 
+                               id="remember_me" 
+                               class="h-4 w-4 bg-gray-800 border-gray-700 rounded text-primary-400 focus:ring-primary-400">
+                        <label for="remember_me" class="ml-2 block text-sm text-gray-400">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <div class="text-sm">
+                        <a href="{% url 'password_reset' %}" class="text-primary-400 hover:text-primary-300">
+                            Forgot your password?
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-green-700 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-green-800 transition duration-200">
+                        Sign In
+                    </button>
+                </div>
+            </form>
+
+            <!-- Footer -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-400">
+                    Don't have an account?
+                    <a href="{% url 'register' %}" class="text-primary-400 hover:text-primary-300 font-medium">
+                        Sign up
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom checkbox styles */
+    input[type="checkbox"] {
+        background-color: rgba(31, 41, 55, 0.8);
+        border: 1px solid rgba(75, 85, 99, 0.4);
+    }
+
+    input[type="checkbox"]:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    input[type="checkbox"]:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    }
+</style>
+{% endblock %}

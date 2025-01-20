@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="glass-card p-6">
+        <h1 class="text-2xl font-bold mb-6">Weekly Meal Plan</h1>
+        
+        <div class="grid gap-6 md:grid-cols-7">
+            {% for day in meal_plan %}
+            <div class="glass-card p-4">
+                <h3 class="font-semibold mb-3">{{ day.date|date:"D, M d" }}</h3>
+                {% for meal in day.meals %}
+                <div class="mb-2 p-2 glass-card">
+                    <span class="text-sm font-medium">{{ meal.get_meal_type_display }}</span>
+                    <p>{{ meal.recipe.title }}</p>
+                    <span class="text-sm text-gray-600">Servings: {{ meal.servings }}</span>
+                </div>
+                {% endfor %}
+                <button 
+                    onclick="showAddMealModal('{{ day.date|date:'Y-m-d' }}')"
+                    class="mt-2 w-full p-2 text-sm glass-card hover:bg-opacity-75"
+                >
+                    + Add Meal
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Add Meal Modal -->
+<div id="add-meal-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="glass-card p-6 max-w-md w-full">
+        <h2 class="text-xl font-semibold mb-4">Add Meal</h2>
+        <form id="add-meal-form" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Recipe</label>
+                <select name="recipe_id" class="w-full p-2 glass-card">
+                    {% for recipe in recipes %}
+                    <option value="{{ recipe.id }}">{{ recipe.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Meal Type</label>
+                <select name="meal_type" class="w-full p-2 glass-card">
+                    {% for value, label in meal_types %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Servings</label>
+                <input type="number" name="servings" min="1" value="1" 
+                       class="w-full p-2 glass-card">
+            </div>
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeAddMealModal()"
+                        class="px-4 py-2 glass-card hover:bg-opacity-75">
+                    Cancel
+                </button>
+                <button type="submit" 
+                        class="px-4 py-2 glass-card hover:bg-opacity-75">
+                    Add Meal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showAddMealModal(date) {
+    document.getElementById('add-meal-modal').classList.remove('hidden');
+    document.getElementById('add-meal-form').dataset.date = date;
+}
+
+function closeAddMealModal() {
+    document.getElementById('add-meal-modal').classList.add('hidden');
+}
+
+document.getElementById('add-meal-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const date = form.dataset.date;
+    
+    const response = await fetch('/recipes/meal-plan/add/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: new FormData(form)
+    });
+    
+    const data = await response.json();
+    if (data.status === 'success') {
+        location.reload();
+    } else {
+        alert(data.message);
+    }
+});
+</script>
+{% endblock %}

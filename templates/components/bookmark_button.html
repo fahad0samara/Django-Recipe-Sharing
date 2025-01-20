@@ -1,0 +1,12 @@
+{% load static %}
+
+<button 
+    id="bookmark-{{ recipe.id }}"
+    onclick="BookmarkManager.toggle('{{ recipe.id }}')"
+    class="p-2 rounded-full hover:bg-gray-100 transition-colors {% if is_bookmarked %}text-yellow-500{% endif %}"
+    title="{% if is_bookmarked %}Remove bookmark{% else %}Bookmark recipe{% endif %}"
+>
+    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path>
+    </svg>
+</button>

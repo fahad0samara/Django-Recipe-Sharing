@@ -1,0 +1,23 @@
+{% load static %}
+
+<div class="glass-card p-4 inline-flex items-center gap-4">
+    <div id="timer-display" class="text-2xl font-mono">00:00</div>
+    <div class="flex gap-2">
+        <button onclick="timer.start()"
+                class="p-2 rounded-full hover:bg-gray-100">
+            ▶️
+        </button>
+        <button onclick="timer.stop()"
+                class="p-2 rounded-full hover:bg-gray-100">
+            ⏸️
+        </button>
+        <button onclick="timer.reset()"
+                class="p-2 rounded-full hover:bg-gray-100">
+            🔄
+        </button>
+    </div>
+</div>
+
+<script>
+    const timer = new RecipeTimer({{ cooking_time }} * 60);
+</script>

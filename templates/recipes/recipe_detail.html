@@ -1,0 +1,458 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/recipe-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="container mx-auto px-4 py-8">
+    <div class="glass-card overflow-hidden">
+        <!-- Recipe Header -->
+        <div class="relative">
+            {% if recipe.image %}
+            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="w-full h-96 object-cover">
+            {% else %}
+            <div class="w-full h-96 bg-gray-700 flex items-center justify-center">
+                <span class="text-gray-400">No Image Available</span>
+            </div>
+            {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="absolute top-4 right-4 flex space-x-2">
+                <!-- Print Button -->
+                <button onclick="window.print()" class="p-2 glass-card hover:bg-gray-800/50 transition-colors text-gray-300 hover:text-white no-print">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                    </svg>
+                </button>
+
+                <!-- Share Buttons -->
+                <div class="flex space-x-2 no-print">
+                    <!-- Facebook -->
+                    <button onclick="handleShare('facebook')" class="p-2 glass-card hover:bg-blue-600/50 transition-colors text-gray-300 hover:text-white">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.77 7.46H14.5v-1.9c0-.9.6-1.1 1-1.1h3V.5h-4.33C10.24.5 9.5 3.44 9.5 5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4z"/>
+                        </svg>
+                    </button>
+
+                    <!-- Twitter -->
+                    <button onclick="handleShare('twitter')" class="p-2 glass-card hover:bg-blue-400/50 transition-colors text-gray-300 hover:text-white">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.44 4.83c-.8.37-1.5.38-2.22.02.93-.56.98-.96 1.32-2.02-.88.52-1.86.9-2.9 1.1-.82-.88-2-1.43-3.3-1.43-2.5 0-4.55 2.04-4.55 4.54 0 .36.03.7.1 1.04-3.77-.2-7.12-2-9.36-4.75-.4.67-.6 1.45-.6 2.3 0 1.56.8 2.95 2 3.77-.74-.03-1.44-.23-2.05-.57v.06c0 2.2 1.56 4.03 3.64 4.44-.67.2-1.37.2-2.06.08.58 1.8 2.26 3.12 4.25 3.16C5.78 18.1 3.37 18.74 1 18.46c2 1.3 4.4 2.04 6.97 2.04 8.35 0 12.92-6.92 12.92-12.93 0-.2 0-.4-.02-.6.9-.63 1.96-1.22 2.56-2.14z"/>
+                        </svg>
+                    </button>
+
+                    <!-- WhatsApp -->
+                    <button onclick="handleShare('whatsapp')" class="p-2 glass-card hover:bg-green-600/50 transition-colors text-gray-300 hover:text-white">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Favorite Button -->
+                {% if user.is_authenticated %}
+                <button onclick="handleFavorite('{{ recipe.slug }}')" 
+                        id="favorite-btn" 
+                        class="p-2 glass-card hover:bg-red-600/50 transition-colors text-gray-300 hover:text-white no-print">
+                    <svg class="w-5 h-5 {% if is_favorite %}text-red-500{% endif %}" 
+                         fill="{% if is_favorite %}currentColor{% else %}none{% endif %}" 
+                         stroke="currentColor" 
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" 
+                              stroke-linejoin="round" 
+                              stroke-width="2" 
+                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </button>
+                {% endif %}
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 p-6">
+                <h1 class="text-4xl font-bold text-white mb-2">{{ recipe.title }}</h1>
+                <div class="flex items-center space-x-4 text-white">
+                    <span class="flex items-center">
+                        <i class="fas fa-user mr-2"></i>
+                        {{ recipe.created_by.username }}
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-calendar mr-2"></i>
+                        {{ recipe.created_at|date:"M d, Y" }}
+                    </span>
+                    {% if recipe.category %}
+                    <span class="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
+                        {{ recipe.category.name }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipe Info -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="glass-card p-4 text-center">
+                    <i class="fas fa-clock text-green-400 text-2xl mb-2"></i>
+                    <p class="text-black text-sm">Prep Time</p>
+                    <p class="text-black">{{ recipe.prep_time }} mins</p>
+                </div>
+                <div class="glass-card p-4 text-center">
+                    <i class="fas fa-fire text-green-400 text-2xl mb-2"></i>
+                    <p class="text-black text-sm">Cook Time</p>
+                    <p class="text-black">{{ recipe.cooking_time }} mins</p>
+                </div>
+                <div class="glass-card p-4 text-center">
+                    <i class="fas fa-users text-green-400 text-2xl mb-2"></i>
+                    <p class="text-black text-sm">Servings</p>
+                    <p class="text-black">{{ recipe.servings }}</p>
+                </div>
+                <div class="glass-card p-4 text-center">
+                    <i class="fas fa-chart-line text-green-400 text-2xl mb-2"></i>
+                    <p class="text-black text-sm">Difficulty</p>
+                    <p class="text-black">{{ recipe.difficulty|title }}</p>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-black mb-4">About this Recipe</h2>
+                <p class="text-black">{{ recipe.description }}</p>
+            </div>
+
+            <!-- Ingredients -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-black mb-4">Ingredients</h2>
+                <ul class="list-disc list-inside text-black">
+                    {% for ingredient in recipe.ingredients.splitlines %}
+                    {% if ingredient %}
+                    <li class="mb-2">{{ ingredient }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Instructions -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-black mb-4">Instructions</h2>
+                <ol class="list-decimal list-inside text-black">
+                    {% for instruction in recipe.instructions.splitlines %}
+                    {% if instruction %}
+                    <li class="mb-4">{{ instruction }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-black">Reviews</h2>
+                    <div class="flex items-center space-x-2">
+                        <div class="text-yellow-400 text-xl">
+                            {% if recipe.reviews.all %}
+                            {% with avg_rating=recipe.reviews.all|length|default:0 %}
+                            {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= avg_rating %}
+                            ★
+                            {% else %}
+                            ☆
+                            {% endif %}
+                            {% endfor %}
+                            {% endwith %}
+                            {% else %}
+                            ☆☆☆☆☆
+                            {% endif %}
+                        </div>
+                        <span class="text-black">({{ recipe.reviews.count }} reviews)</span>
+                    </div>
+                </div>
+
+                {% if user.is_authenticated %}
+                <div class="glass-card p-6 mb-6 border border-gray-700/30">
+                    <h3 class="text-xl font-semibold text-black mb-4">Write a Review</h3>
+                    <form method="post" class="space-y-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="review" value="true">
+                        <div>
+                            <label class="form-label">Rating</label>
+                            <div class="rating-input flex items-center space-x-4">
+                                {% for value, label in review_form.rating.field.choices %}
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="radio" name="rating" value="{{ value }}" class="hidden">
+                                    <span class="text-2xl text-yellow-400 hover:text-yellow-300 transition-colors duration-200">
+                                        {% if forloop.counter <= 5 %}★{% endif %}
+                                    </span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Your Review</label>
+                            {{ review_form.comment }}
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="bg-gradient-to-r from-green-500 to-green-700 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-green-800 transition duration-200">
+                                <i class="fas fa-star mr-2"></i>
+                                Post Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+
+                <div class="space-y-4">
+                    {% for review in reviews %}
+                    <div class="glass-card p-6 border border-gray-700/30 transition-transform duration-200 hover:-translate-y-1">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center">
+                                    <span class="text-white font-semibold">{{ review.user.username|make_list|first|upper }}</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-black font-medium">{{ review.user.username }}</h4>
+                                    <span class="text-black text-sm">{{ review.created_at|date:"M d, Y" }}</span>
+                                </div>
+                            </div>
+                            <div class="text-yellow-400">
+                                {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= review.rating %}
+                                ★
+                                {% else %}
+                                ☆
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="pl-14">
+                            <p class="text-black">{{ review.comment }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-8">
+                        <div class="text-black mb-4">
+                            <i class="fas fa-star text-4xl mb-2"></i>
+                            <p>No reviews yet</p>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <p class="text-black">Be the first to review this recipe!</p>
+                        {% else %}
+                        <p class="text-black">
+                            <a href="{% url 'login' %}" class="text-green-400 hover:text-green-300">Log in</a>
+                            to write a review
+                        </p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-black">Comments</h2>
+                    <span class="text-emerald-400">({{ comments|length }} comments)</span>
+                </div>
+
+                {% if user.is_authenticated %}
+                <div class="glass-card p-6 mb-6 border border-emerald-500/30 bg-gray-900/50">
+                    <h3 class="text-xl font-semibold text-emerald-400 mb-4">Leave a Comment</h3>
+                    <form method="post" class="space-y-4" id="comment-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="comment" value="true">
+                        <input type="hidden" name="parent" id="comment-parent-id" value="">
+                        <div>
+                            <label class="form-label text-emerald-400">Your Comment</label>
+                            {{ comment_form.content }}
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="submit" class="bg-gradient-to-r from-green-500 to-green-700 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-green-800 transition duration-200">
+                                <i class="fas fa-comment mr-2"></i>
+                                Post Comment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+
+                <div class="space-y-6">
+                    {% for comment in comments %}
+                    <div class="glass-card p-6 border border-emerald-500/30 bg-gray-900/50 hover:bg-gray-800/50 transition-all duration-200">
+                        <!-- Main comment -->
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 flex-shrink-0 flex items-center justify-center">
+                                <span class="text-white font-semibold">{{ comment.user.username|make_list|first|upper }}</span>
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div>
+                                        <h4 class="text-emerald-400 font-medium">{{ comment.user.username }}</h4>
+                                        <span class="text-black text-sm">{{ comment.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                    {% if user.is_authenticated %}
+                                    <button onclick="showReplyForm('{{ comment.id }}')" class="text-emerald-400 hover:text-emerald-300 transition-colors duration-200">
+                                        <i class="fas fa-reply mr-1"></i> Reply
+                                    </button>
+                                    {% endif %}
+                                </div>
+                                <p class="text-black">{{ comment.content }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Replies -->
+                        {% if comment.replies.all %}
+                        <div class="mt-4 ml-14 space-y-4">
+                            {% for reply in comment.replies.all %}
+                            <div class="glass-card p-4 border border-emerald-500/20 bg-gray-800/30">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500/80 to-green-600/80 flex-shrink-0 flex items-center justify-center">
+                                        <span class="text-white font-semibold text-sm">{{ reply.user.username|make_list|first|upper }}</span>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div>
+                                                <h4 class="text-emerald-400 font-medium">{{ reply.user.username }}</h4>
+                                                <span class="text-black text-sm">{{ reply.created_at|date:"M d, Y" }}</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-black">{{ reply.content }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Reply form (hidden by default) -->
+                        {% if user.is_authenticated %}
+                        <div id="reply-form-{{ comment.id }}" class="hidden mt-4 ml-14">
+                            <form method="post" class="space-y-4">
+                                {% csrf_token %}
+                                <input type="hidden" name="comment" value="true">
+                                <input type="hidden" name="parent" value="{{ comment.id }}">
+                                <div>
+                                    <label class="form-label text-emerald-400">Your Reply</label>
+                                    <textarea name="content" rows="2" class="form-textarea bg-gray-800 border-emerald-500/30 focus:border-emerald-500 focus:ring-emerald-500/50" placeholder="Write your reply..."></textarea>
+                                </div>
+                                <div class="flex justify-end space-x-2">
+                                    <button type="button" onclick="hideReplyForm('{{ comment.id }}')" class="px-4 py-2 rounded-lg border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-all duration-200">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="bg-gradient-to-r from-green-500 to-green-700 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-green-800 transition duration-200">
+                                        <i class="fas fa-reply mr-2"></i>
+                                        Post Reply
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-8">
+                        <div class="text-black mb-4">
+                            <i class="fas fa-comments text-4xl mb-2 text-emerald-500"></i>
+                            <p>No comments yet</p>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <p class="text-emerald-400">Be the first to comment!</p>
+                        {% else %}
+                        <p class="text-black">
+                            <a href="{% url 'login' %}" class="text-emerald-400 hover:text-emerald-300 transition-colors duration-200">Log in</a>
+                            to leave a comment
+                        </p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <style>
+                .form-textarea {
+                    @apply block w-full rounded-lg bg-gray-800 border-gray-700 text-black focus:border-emerald-500 focus:ring-emerald-500/50;
+                }
+                .form-label {
+                    @apply block text-sm font-medium mb-1;
+                }
+            </style>
+
+            <script>
+                function showReplyForm(commentId) {
+                    document.getElementById(`reply-form-${commentId}`).classList.remove('hidden');
+                }
+
+                function hideReplyForm(commentId) {
+                    document.getElementById(`reply-form-${commentId}`).classList.add('hidden');
+                }
+            </script>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+console.log('Recipe detail JavaScript loaded');
+
+function handleShare(platform) {
+    console.log('Sharing to:', platform);
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(document.querySelector('h1').textContent);
+    
+    let shareUrl;
+    switch (platform) {
+        case 'facebook':
+            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+            break;
+        case 'twitter':
+            shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+            break;
+        case 'whatsapp':
+            shareUrl = `https://api.whatsapp.com/send?text=${title}%20${url}`;
+            break;
+        default:
+            console.error('Invalid platform:', platform);
+            return;
+    }
+    
+    window.open(shareUrl, 'Share Recipe', 'width=600,height=400,resizable=yes,scrollbars=yes');
+}
+
+function handleFavorite(slug) {
+    console.log('Toggling favorite for:', slug);
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    fetch(`/recipe/${slug}/toggle-favorite/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json',
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Favorite response:', data);
+        const favoriteBtn = document.getElementById('favorite-btn');
+        const favoriteIcon = favoriteBtn.querySelector('svg');
+        
+        if (data.is_favorite) {
+            favoriteIcon.classList.add('text-red-500');
+            favoriteIcon.setAttribute('fill', 'currentColor');
+        } else {
+            favoriteIcon.classList.remove('text-red-500');
+            favoriteIcon.setAttribute('fill', 'none');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error toggling favorite status. Please try again.');
+    });
+}
+</script>
+{% endblock %}

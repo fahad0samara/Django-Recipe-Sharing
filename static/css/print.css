@@ -1,0 +1,26 @@
+@media print {
+    /* Hide non-essential elements */
+    nav, footer, .no-print {
+        display: none !important;
+    }
+
+    /* Recipe content styling */
+    .recipe-content {
+        max-width: 100%;
+        margin: 0;
+        padding: 20px;
+    }
+
+    /* Ensure images fit */
+    .recipe-image {
+        max-width: 300px;
+        height: auto;
+    }
+
+    /* Clear backgrounds */
+    * {
+        background: transparent !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+}

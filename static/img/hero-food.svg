@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="800" height="600" fill="#F3F4F6"/>
+    
+    <!-- Plate -->
+    <circle cx="400" cy="300" r="200" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="4"/>
+    <circle cx="400" cy="300" r="180" fill="none" stroke="#E5E7EB" stroke-width="2"/>
+    
+    <!-- Food Items -->
+    <!-- Salad -->
+    <g transform="translate(320 250)">
+        <path d="M0,0 C30,-20 60,-20 90,0 C120,20 150,20 180,0" 
+              fill="none" stroke="#10B981" stroke-width="4"/>
+        <circle cx="30" cy="-5" r="15" fill="#34D399"/>
+        <circle cx="90" cy="5" r="12" fill="#6EE7B7"/>
+        <circle cx="150" cy="-5" r="14" fill="#34D399"/>
+    </g>
+    
+    <!-- Utensils -->
+    <g transform="translate(250 300)">
+        <!-- Fork -->
+        <path d="M0,0 L20,-100 M10,0 L30,-100 M20,0 L40,-100" 
+              stroke="#6B7280" stroke-width="3" stroke-linecap="round"/>
+        <path d="M10,-110 L30,-110 L20,-90 Z" fill="#6B7280"/>
+    </g>
+    
+    <g transform="translate(530 300)">
+        <!-- Spoon -->
+        <path d="M0,0 L-20,-90 Q-20,-120 0,-120 Q20,-120 20,-90 L0,0" 
+              fill="#6B7280"/>
+        <circle cx="0" cy="-120" r="15" fill="#6B7280"/>
+    </g>
+    
+    <!-- Steam -->
+    <g stroke="#9CA3AF" stroke-width="3" fill="none">
+        <path d="M350,100 Q370,80 390,100 T430,100" class="animate-float">
+            <animate attributeName="d" 
+                     dur="3s"
+                     repeatCount="indefinite"
+                     values="M350,100 Q370,80 390,100 T430,100;
+                             M350,90 Q370,70 390,90 T430,90;
+                             M350,100 Q370,80 390,100 T430,100"/>
+        </path>
+        <path d="M370,80 Q390,60 410,80 T450,80" class="animate-float">
+            <animate attributeName="d"
+                     dur="3s"
+                     repeatCount="indefinite"
+                     values="M370,80 Q390,60 410,80 T450,80;
+                             M370,70 Q390,50 410,70 T450,70;
+                             M370,80 Q390,60 410,80 T450,80"/>
+        </path>
+    </g>
+    
+    <!-- Text -->
+    <text x="400" y="500" font-family="Arial" font-size="24" fill="#4B5563" text-anchor="middle">
+        Delicious Recipes Await
+    </text>
+</svg>

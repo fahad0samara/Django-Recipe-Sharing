@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="dynamic-bg min-h-screen">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Profile Information -->
+            <div class="lg:col-span-2">
+                <div class="glass-card p-6">
+                    <div class="flex items-center mb-6">
+                        <img src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" 
+                             class="w-20 h-20 rounded-full mr-4" 
+                             alt="{{ user.username }}">
+                        <div>
+                            <h2 class="text-2xl font-bold text-emerald-400">{{ user.get_full_name|default:user.username }}</h2>
+                            <p class="text-emerald-600">Member since {{ user.date_joined|date:"F d, Y" }}</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                        {% csrf_token %}
+                        {% for field in u_form %}
+                        <div>
+                            <label class="block text-sm font-medium text-emerald-500 mb-1">
+                                {{ field.label }}
+                            </label>
+                            {{ field.errors }}
+                            {{ field }}
+                            {% if field.help_text %}
+                            <p class="mt-1 text-sm text-emerald-600">{{ field.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        <button type="submit" 
+                                class="w-full bg-gradient-to-r from-green-500 to-green-700 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-green-800 transition duration-200">
+                            Update Profile
+                        </button>
+                    </form>
+                </div>
+
+                <!-- User's Recipes -->
+                <div class="glass-card p-6 mt-8">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-4">Your Recipes</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {% for recipe in user_recipes %}
+                        <div class="glass-card overflow-hidden transform hover:scale-105 transition duration-200">
+                            <div class="relative pb-48">
+                                {% if recipe.image %}
+                                <img src="{{ recipe.image.url }}" 
+                                     class="absolute inset-0 h-full w-full object-cover" 
+                                     alt="{{ recipe.title }}">
+                                {% else %}
+                                <img src="{% static 'images/default-recipe.jpg' %}" 
+                                     class="absolute inset-0 h-full w-full object-cover" 
+                                     alt="Default Recipe Image">
+                                {% endif %}
+                            </div>
+                            <div class="p-4">
+                                <h4 class="text-lg font-semibold text-emerald-400 mb-2">{{ recipe.title }}</h4>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-emerald-600">{{ recipe.created_at|date:"M d, Y" }}</span>
+                                    <a href="{% url 'recipe_detail' recipe.slug %}" 
+                                       class="text-emerald-400 hover:text-emerald-300">View →</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-span-2 text-center py-8">
+                            <p class="text-emerald-600 mb-4">You haven't created any recipes yet.</p>
+                            <a href="{% url 'submit_recipe' %}" 
+                               class="inline-block bg-gradient-to-r from-green-500 to-green-700 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-green-800">
+                                Create Your First Recipe
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-8">
+                <!-- User Stats -->
+                <div class="glass-card p-6">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-4">Your Stats</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-emerald-400">{{ user_recipes.count }}</p>
+                            <p class="text-emerald-600">Recipes</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-emerald-400">{{ total_reviews }}</p>
+                            <p class="text-emerald-600">Reviews</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-emerald-400">{{ total_likes }}</p>
+                            <p class="text-emerald-600">Likes</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-2xl font-bold text-emerald-400">{{ avg_rating|default:"0.0" }}</p>
+                            <p class="text-emerald-600">Avg Rating</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Favorite Recipes -->
+                <div class="glass-card p-6">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-4">Favorite Recipes</h3>
+                    <div class="space-y-4">
+                        {% for recipe in favorite_recipes %}
+                        <a href="{% url 'recipe_detail' recipe.slug %}" class="block hover:bg-gray-50 rounded-lg p-2">
+                            <div class="flex items-center">
+                                <img src="{% if recipe.image %}{{ recipe.image.url }}{% else %}{% static 'images/default-recipe.jpg' %}{% endif %}" 
+                                     class="w-16 h-16 object-cover rounded-lg mr-3" 
+                                     alt="{{ recipe.title }}">
+                                <div>
+                                    <h4 class="text-emerald-400 font-medium">{{ recipe.title }}</h4>
+                                    <p class="text-emerald-600 text-sm">{{ recipe.created_by.username }}</p>
+                                </div>
+                            </div>
+                        </a>
+                        {% empty %}
+                        <p class="text-emerald-600 text-center">No favorite recipes yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="glass-card p-6">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-4">Recent Activity</h3>
+                    <div class="space-y-4">
+                        {% for activity in recent_activities %}
+                        <div class="flex items-center text-sm">
+                            <span class="w-2 h-2 bg-emerald-400 rounded-full mr-2"></span>
+                            <span class="text-emerald-600">{{ activity.description }}</span>
+                            <span class="ml-auto text-emerald-500">{{ activity.created_at|timesince }} ago</span>
+                        </div>
+                        {% empty %}
+                        <p class="text-emerald-600 text-center">No recent activity.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

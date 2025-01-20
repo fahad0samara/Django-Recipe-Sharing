@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Recipe{% endblock %}
+
+{% block content %}
+<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="glass-card p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-primary-400">Share Your Recipe</h2>
+                <p class="mt-2 text-gray-400">Share your culinary masterpiece with our community</p>
+            </div>
+
+            <!-- Form -->
+            <form method="post" enctype="multipart/form-data" class="space-y-8">
+                {% csrf_token %}
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="{% if message.tags == 'success' %}bg-green-900/50 border-green-500 text-green-200{% else %}bg-red-900/50 border-red-500 text-red-200{% endif %} px-4 py-3 rounded-md border mb-4">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Two Column Layout for Basic Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Left Column -->
+                    <div class="space-y-6">
+                        <!-- Title -->
+                        <div>
+                            <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                                Recipe Title <span class="text-red-500">*</span>
+                            </label>
+                            <div class="mt-1">
+                                {{ form.title }}
+                                {% if form.title.help_text %}
+                                    <p class="mt-1 text-sm text-gray-400">{{ form.title.help_text }}</p>
+                                {% endif %}
+                                {% if form.title.errors %}
+                                    <div class="mt-1 text-sm text-red-500">
+                                        {% for error in form.title.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div>
+                            <label for="{{ form.category.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                                Category <span class="text-red-500">*</span>
+                            </label>
+                            <div class="mt-1">
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                    <div class="mt-1 text-sm text-red-500">
+                                        {% for error in form.category.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Cooking Time -->
+                        <div>
+                            <label for="{{ form.cooking_time.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                                Cooking Time (minutes) <span class="text-red-500">*</span>
+                            </label>
+                            <div class="mt-1">
+                                {{ form.cooking_time }}
+                                {% if form.cooking_time.help_text %}
+                                    <p class="mt-1 text-sm text-gray-400">{{ form.cooking_time.help_text }}</p>
+                                {% endif %}
+                                {% if form.cooking_time.errors %}
+                                    <div class="mt-1 text-sm text-red-500">
+                                        {% for error in form.cooking_time.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Prep Time -->
+                        <div>
+                            <label for="{{ form.prep_time.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                                Prep Time (minutes) <span class="text-red-500">*</span>
+                            </label>
+                            <div class="mt-1">
+                                {{ form.prep_time }}
+                                {% if form.prep_time.help_text %}
+                                    <p class="mt-1 text-sm text-gray-400">{{ form.prep_time.help_text }}</p>
+                                {% endif %}
+                                {% if form.prep_time.errors %}
+                                    <div class="mt-1 text-sm text-red-500">
+                                        {% for error in form.prep_time.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <!-- Description -->
+                        <div>
+                            <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                                Description <span class="text-red-500">*</span>
+                            </label>
+                            <div class="mt-1">
+                                {{ form.description }}
+                                {% if form.description.help_text %}
+                                    <p class="mt-1 text-sm text-gray-400">{{ form.description.help_text }}</p>
+                                {% endif %}
+                                {% if form.description.errors %}
+                                    <div class="mt-1 text-sm text-red-500">
+                                        {% for error in form.description.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Additional Fields -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Servings -->
+                            <div>
+                                <label for="{{ form.servings.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                                    Servings <span class="text-red-500">*</span>
+                                </label>
+                                <div class="mt-1">
+                                    {{ form.servings }}
+                                    {% if form.servings.errors %}
+                                        <div class="mt-1 text-sm text-red-500">
+                                            {% for error in form.servings.errors %}
+                                                <p>{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Calories -->
+                            <div>
+                                <label for="{{ form.calories_per_serving.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                                    Calories per Serving
+                                </label>
+                                <div class="mt-1">
+                                    {{ form.calories_per_serving }}
+                                    {% if form.calories_per_serving.errors %}
+                                        <div class="mt-1 text-sm text-red-500">
+                                            {% for error in form.calories_per_serving.errors %}
+                                                <p>{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Difficulty and Dietary Preferences -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="{{ form.difficulty.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                                    Difficulty <span class="text-red-500">*</span>
+                                </label>
+                                <div class="mt-1">
+                                    {{ form.difficulty }}
+                                    {% if form.difficulty.errors %}
+                                        <div class="mt-1 text-sm text-red-500">
+                                            {% for error in form.difficulty.errors %}
+                                                <p>{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="{{ form.dietary_preferences.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                                    Dietary Preferences
+                                </label>
+                                <div class="mt-1">
+                                    {{ form.dietary_preferences }}
+                                    {% if form.dietary_preferences.errors %}
+                                        <div class="mt-1 text-sm text-red-500">
+                                            {% for error in form.dietary_preferences.errors %}
+                                                <p>{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Full Width Fields -->
+                <div class="space-y-6">
+                    <!-- Ingredients -->
+                    <div>
+                        <label for="{{ form.ingredients.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                            Ingredients <span class="text-red-500">*</span>
+                        </label>
+                        <div class="mt-1">
+                            {{ form.ingredients }}
+                            {% if form.ingredients.help_text %}
+                                <p class="mt-1 text-sm text-gray-400 whitespace-pre-line">{{ form.ingredients.help_text }}</p>
+                            {% endif %}
+                            {% if form.ingredients.errors %}
+                                <div class="mt-1 text-sm text-red-500">
+                                    {% for error in form.ingredients.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div>
+                        <label for="{{ form.instructions.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                            Instructions <span class="text-red-500">*</span>
+                        </label>
+                        <div class="mt-1">
+                            {{ form.instructions }}
+                            {% if form.instructions.help_text %}
+                                <p class="mt-1 text-sm text-gray-400 whitespace-pre-line">{{ form.instructions.help_text }}</p>
+                            {% endif %}
+                            {% if form.instructions.errors %}
+                                <div class="mt-1 text-sm text-red-500">
+                                    {% for error in form.instructions.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div>
+                        <label for="{{ form.image.id_for_label }}" class="block text-sm font-medium text-primary-400">
+                            Recipe Image
+                        </label>
+                        <div class="mt-1">
+                            <div class="flex items-center space-x-4">
+                                {{ form.image }}
+                                <p class="text-sm text-gray-400">Upload a photo of your finished recipe (optional)</p>
+                            </div>
+                            {% if form.image.errors %}
+                                <div class="mt-1 text-sm text-red-500">
+                                    {% for error in form.image.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-colors duration-200">
+                            Share Recipe
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Form input styling */
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        @apply w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm text-gray-300;
+        @apply focus:ring-2 focus:ring-primary-400 focus:border-primary-400;
+        @apply placeholder-gray-500;
+    }
+
+    .recipe-textarea {
+        @apply w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md shadow-sm text-gray-300;
+        @apply focus:ring-2 focus:ring-primary-400 focus:border-primary-400;
+        @apply placeholder-gray-500;
+        min-height: 200px;
+        line-height: 1.5;
+    }
+
+    textarea {
+        @apply h-40 resize-y;
+    }
+
+    input[type="file"] {
+        @apply sr-only;
+    }
+
+    /* Button hover effect */
+    .btn-primary {
+        @apply transition-all duration-200;
+    }
+
+    .btn-primary:hover {
+        @apply transform -translate-y-0.5 shadow-lg;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    /* Glass card enhancements */
+    .glass-card {
+        @apply backdrop-blur-lg bg-gray-900/70;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% endblock %}
