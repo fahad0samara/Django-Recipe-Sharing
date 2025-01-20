@@ -74,7 +74,7 @@ A modern, feature-rich recipe sharing platform built with Django and JavaScript.
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+
 cd project
 ```
 
